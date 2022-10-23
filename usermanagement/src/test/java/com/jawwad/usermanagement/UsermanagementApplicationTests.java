@@ -3,10 +3,10 @@ package com.jawwad.usermanagement;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class UsermanagementApplicationTests {
 
-	@Test
+//	@Test
 	void contextLoads() {
 	}
 
