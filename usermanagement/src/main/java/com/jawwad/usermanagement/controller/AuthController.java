@@ -2,6 +2,8 @@ package com.jawwad.usermanagement.controller;
 
 import com.jawwad.usermanagement.DTO.LoginRequest;
 import com.jawwad.usermanagement.DTO.LoginResponse;
+import com.jawwad.usermanagement.DTO.RegisterRequest;
+import com.jawwad.usermanagement.KeyCloakService;
 import com.jawwad.usermanagement.config.KeycloakProvider;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -22,6 +24,12 @@ import javax.ws.rs.NotAuthorizedException;
 @RequestMapping("/user")
 public class AuthController {
     private final KeycloakProvider keycloakProvider;
+    private final KeyCloakService keyCloakService;
+
+    @PostMapping("/oauth/register")
+    public ResponseEntity<?> register(@NotNull @RequestBody RegisterRequest registerRequest) throws Exception {
+        return ResponseEntity.ok(keyCloakService.create(registerRequest));
+    }
 
     @PostMapping("/oauth/login")
     public ResponseEntity<LoginResponse> login(@NotNull @RequestBody LoginRequest loginRequest) {

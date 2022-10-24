@@ -1,12 +1,8 @@
 package com.jawwad.usermanagement;
 
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.jawwad.usermanagement.DTO.UserEntity;
+import com.jawwad.usermanagement.DTO.RegisterRequest;
 import com.jawwad.usermanagement.config.ConfigData;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -85,12 +81,12 @@ public class KeyCloakService {
     }
 
 
-    public String create(UserEntity userEntity) throws Exception {
+    public String create(RegisterRequest registerRequest) throws Exception {
 
 
         CredentialRepresentation credentialRepresentation =
-                preparePasswordRepresentation(userEntity.getPassword());
-        UserRepresentation user = prepareUserRepresentation(userEntity, credentialRepresentation);
+                preparePasswordRepresentation(registerRequest.getPassword());
+        UserRepresentation user = prepareUserRepresentation(registerRequest, credentialRepresentation);
         UsersResource usersResource = keycloak.realm(realm).users();
         Response response = usersResource.create(user);
         System.out.println(
@@ -101,9 +97,9 @@ public class KeyCloakService {
 
         try {
             List<RoleRepresentation> roles = new ArrayList<>();
-            if (!CollectionUtils.isEmpty(userEntity.getRoleEntities())) {
+            if (!CollectionUtils.isEmpty(registerRequest.getRoleEntities())) {
                 RolesResource rolesResource = keycloak.realm(realm).roles();
-                userEntity
+                registerRequest
                         .getRoleEntities()
                         .forEach(
                                 roleEntity -> {
@@ -116,7 +112,7 @@ public class KeyCloakService {
                     "Roles Size: "
                             + roles.size()
                             + " --- userEntity.getRoleEntities() size : "
-                            + (userEntity.getRoleEntities() != null ? userEntity.getRoleEntities().size() : 0));
+                            + (registerRequest.getRoleEntities() != null ? registerRequest.getRoleEntities().size() : 0));
 
             if (!CollectionUtils.isEmpty(roles)) {
                 assignClientLevelRole(userId, roles);
@@ -137,7 +133,7 @@ public class KeyCloakService {
 
 
     private UserRepresentation prepareUserRepresentation(
-            UserEntity request, CredentialRepresentation cR) {
+            RegisterRequest request, CredentialRepresentation cR) {
         UserRepresentation newUser = new UserRepresentation();
         newUser.setUsername(request.getEmail());
         newUser.setEmail(request.getEmail());

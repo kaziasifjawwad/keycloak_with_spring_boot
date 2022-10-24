@@ -9,13 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UserEntity {
-    private String id;
+public class RegisterRequest {
     private String username;
     private String email;
     private String firstName;
     private String lastName;
-
     private String typeItemCode;
     public boolean deleted;
     public boolean locked;
