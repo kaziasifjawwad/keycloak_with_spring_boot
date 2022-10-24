@@ -18,9 +18,9 @@ public class Tester implements CommandLineRunner {
     public void run(String... args) throws Exception {
         UserEntity userEntity = new UserEntity()
                 .setDeleted(false)
-                .setEmail("arifulhoqu@gmail.com")
-                .setFirstName("ariful")
-                .setLastName("hoque")
+                .setEmail("asif@gmail.com")
+                .setFirstName("asif")
+                .setLastName("jawwad")
                 .setPassword("123456789")
                 .setId("1")
                 .setUsername("arifulhoque")

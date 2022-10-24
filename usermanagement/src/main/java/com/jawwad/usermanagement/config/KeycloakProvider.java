@@ -16,11 +16,11 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class KeycloakProvider {
 
-    public String serverURL = ConfigData.serverURL;
+    public String serverURL = ConfigData.authUrl;
 
     public String realm = ConfigData.realm;
 
-    public String clientID = "usermanagement";
+    public String clientID = ConfigData.clientId;
 
     public String clientSecret = ConfigData.secretKey;
 

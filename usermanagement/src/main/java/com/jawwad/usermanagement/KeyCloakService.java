@@ -6,9 +6,8 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.jawwad.usermanagement.config.ConfigData;
-import com.jawwad.usermanagement.pojo.AppConstants;
 import com.jawwad.usermanagement.DTO.UserEntity;
+import com.jawwad.usermanagement.config.ConfigData;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -88,7 +86,6 @@ public class KeyCloakService {
 
 
     public String create(UserEntity userEntity) throws Exception {
-
 
 
         CredentialRepresentation credentialRepresentation =
@@ -163,20 +160,20 @@ public class KeyCloakService {
     private CredentialRepresentation preparePasswordRepresentation(String password)
             throws JsonProcessingException {
         var encryptesPass = passwordEncoder.encode(password);
-       //String salt = password.substring(7, 29);
-       String salt = encryptesPass.substring(7,29);
+        String salt = encryptesPass.substring(7, 29);
+//        String salt = password.substring(1, 3);
         String encodedString = Base64.getEncoder().encodeToString(salt.getBytes());
 
         CredentialRepresentation cR = new CredentialRepresentation();
         cR.setTemporary(false);
         cR.setType(CredentialRepresentation.PASSWORD);
-        cR.setValue(encryptesPass);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        cR.setValue(password);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-        cR.setSecretData(objectMapper.writeValueAsString(new SecretData(password, encodedString)));
-        cR.setCredentialData(new Gson().toJson(new CredentialData("bcrypt", 1024)));
-        cR.setValue(null);
+//        cR.setSecretData(objectMapper.writeValueAsString(new SecretData(encryptesPass, encodedString)));
+//        cR.setCredentialData(new Gson().toJson(new CredentialData("bcrypt", 1024)));
+//        cR.setValue(null);
         return cR;
     }
 
