@@ -16,13 +16,13 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class KeycloakProvider {
 
-    public String serverURL = "http://localhost:8080";
+    public String serverURL = ConfigData.serverURL;
 
-    public String realm = "springSecurity";
+    public String realm = ConfigData.realm;
 
     public String clientID = "usermanagement";
 
-    public String clientSecret = "c20c200e-7ebb-41d6-b0c9-e375e5190a84";
+    public String clientSecret = ConfigData.secretKey;
 
     private static Keycloak keycloak = null;
 

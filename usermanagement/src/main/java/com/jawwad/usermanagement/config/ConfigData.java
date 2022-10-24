@@ -1,7 +1,7 @@
 package com.jawwad.usermanagement.config;
 
 public class ConfigData {
-    public static String secretKey = "c20c200e-7ebb-41d6-b0c9-e375e5190a84";
+    public static String secretKey = "fe75142f-b0f8-498b-842e-28783c57930f";
 
     public static String clientId = "usermanagement";
 
@@ -10,8 +10,5 @@ public class ConfigData {
     public static String realm="springSecurity";
 
     public static String serverURL = "http://localhost:8080";
-
-
-
 
 }

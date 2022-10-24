@@ -18,12 +18,12 @@ public class Tester implements CommandLineRunner {
     public void run(String... args) throws Exception {
         UserEntity userEntity = new UserEntity()
                 .setDeleted(false)
-                .setEmail("asifjawwad@gmail.com")
-                .setFirstName("asif")
-                .setLastName("jawwad")
+                .setEmail("arifulhoqu@gmail.com")
+                .setFirstName("ariful")
+                .setLastName("hoque")
                 .setPassword("123456789")
                 .setId("1")
-                .setUsername("kaziasifjawwad")
+                .setUsername("arifulhoque")
                 .setRoleEntities(List.of("admin"));
 
         keyCloakService.create(userEntity);

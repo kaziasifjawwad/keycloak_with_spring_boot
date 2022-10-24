@@ -21,6 +21,8 @@ import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -32,6 +34,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class KeyCloakService {
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     private final Keycloak keycloak;
@@ -84,6 +88,9 @@ public class KeyCloakService {
 
 
     public String create(UserEntity userEntity) throws Exception {
+
+
+
         CredentialRepresentation credentialRepresentation =
                 preparePasswordRepresentation(userEntity.getPassword());
         UserRepresentation user = prepareUserRepresentation(userEntity, credentialRepresentation);
@@ -135,20 +142,19 @@ public class KeyCloakService {
     private UserRepresentation prepareUserRepresentation(
             UserEntity request, CredentialRepresentation cR) {
         UserRepresentation newUser = new UserRepresentation();
-        newUser.setId(request.getId().toString());
-        newUser.setUsername(request.getUsername());
+        newUser.setUsername(request.getEmail());
         newUser.setEmail(request.getEmail());
         newUser.setEmailVerified(true);
         newUser.setFirstName(request.getFirstName());
         newUser.setLastName(request.getLastName());
         newUser.setCredentials(List.of(cR));
-        newUser.setEnabled(!request.isDeleted() && !request.isLocked());
+        newUser.setEnabled(true);
 
         Map<String, List<String>> attributes = new HashMap<>();
-        attributes.put(AppConstants.ATTRIBUTE_USER_TABLE_ID, Arrays.asList(request.getId().toString()));
+/*        attributes.put(AppConstants.ATTRIBUTE_USER_TABLE_ID, Arrays.asList(request.getId().toString()));
         attributes.put(AppConstants.ATTRIBUTE_USER_TYPE, Arrays.asList(request.getType()));
         attributes.put(
-                AppConstants.ATTRIBUTE_USER_TYPE_ITEM_CODE, Arrays.asList(request.getTypeItemCode()));
+                AppConstants.ATTRIBUTE_USER_TYPE_ITEM_CODE, Arrays.asList(request.getTypeItemCode()));*/
         newUser.setAttributes(attributes);
         return newUser;
     }
@@ -156,14 +162,15 @@ public class KeyCloakService {
 
     private CredentialRepresentation preparePasswordRepresentation(String password)
             throws JsonProcessingException {
-//        String salt = password.substring(7, 29);
-        String salt = password.substring(3,5);
+        var encryptesPass = passwordEncoder.encode(password);
+       //String salt = password.substring(7, 29);
+       String salt = encryptesPass.substring(7,29);
         String encodedString = Base64.getEncoder().encodeToString(salt.getBytes());
 
         CredentialRepresentation cR = new CredentialRepresentation();
         cR.setTemporary(false);
         cR.setType(CredentialRepresentation.PASSWORD);
-        cR.setValue(password);
+        cR.setValue(encryptesPass);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
