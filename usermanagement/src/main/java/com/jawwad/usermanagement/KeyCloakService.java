@@ -142,6 +142,7 @@ public class KeyCloakService {
         newUser.setLastName(request.getLastName());
         newUser.setCredentials(List.of(cR));
         newUser.setEnabled(true);
+        newUser.setRealmRoles(request.getRoleEntities());
 
         Map<String, List<String>> attributes = new HashMap<>();
 /*        attributes.put(AppConstants.ATTRIBUTE_USER_TABLE_ID, Arrays.asList(request.getId().toString()));

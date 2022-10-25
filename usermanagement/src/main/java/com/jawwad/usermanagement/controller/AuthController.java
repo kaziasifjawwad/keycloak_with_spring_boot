@@ -28,6 +28,7 @@ public class AuthController {
 
     @PostMapping("/oauth/register")
     public ResponseEntity<?> register(@NotNull @RequestBody RegisterRequest registerRequest) throws Exception {
+        System.out.println("hello");
         return ResponseEntity.ok(keyCloakService.create(registerRequest));
     }
 
