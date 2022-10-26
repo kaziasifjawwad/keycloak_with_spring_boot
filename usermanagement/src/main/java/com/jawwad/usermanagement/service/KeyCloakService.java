@@ -1,8 +1,9 @@
-package com.jawwad.usermanagement;
+package com.jawwad.usermanagement.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jawwad.usermanagement.DTO.RegisterRequest;
+import com.jawwad.usermanagement.DTO.RoleCreationRequest;
 import com.jawwad.usermanagement.config.ConfigData;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,40 @@ public class KeyCloakService {
 
     private final String authUrl = ConfigData.authUrl;
 
-    public void assignClientLevelRole(String userId, List<RoleRepresentation> roleRepresentationList)
+    public void createRealLevelRole(RoleCreationRequest roleCreationRequest) {
+        RolesResource roleResource = keycloak.realm(realm).roles();
+        RoleRepresentation roleRepresentation = new RoleRepresentation();
+        roleRepresentation.setName(roleCreationRequest.getRoleName());
+        roleRepresentation.setDescription(roleCreationRequest.getRoleDescription());
+        roleResource.create(roleRepresentation);
+    }
+
+    public RoleRepresentation findRoleByRoleName(String roleName) {
+        RolesResource roleResource = keycloak.realm(realm).roles();
+        return roleResource.get(roleName).toRepresentation();
+    }
+
+    public List<RoleRepresentation> getAllRoles() {
+        RolesResource roleResource = keycloak.realm(realm).roles();
+        return roleResource.list();
+    }
+
+
+    public void assignRealmLevelRole(String userId, List<RoleRepresentation> roleRepresentationList)
+            throws Exception {
+        List<ClientRepresentation> clientByName = findClientById(clientId);
+        keycloak
+                .realm(realm)
+                .users()
+                .get(userId)
+                .roles()
+                .realmLevel()
+//                .clientLevel(clientByName.get(0).getId())
+                .add(roleRepresentationList);
+    }
+
+
+    public void assigClientLevelRole(String userId, List<RoleRepresentation> roleRepresentationList)
             throws Exception {
         List<ClientRepresentation> clientByName = findClientById(clientId);
         keycloak
@@ -52,7 +86,6 @@ public class KeyCloakService {
                 .clientLevel(clientByName.get(0).getId())
                 .add(roleRepresentationList);
     }
-
 
     public List<ClientRepresentation> findClientById(String clientId) throws Exception {
         List<ClientRepresentation> clientRepresentationList =
@@ -103,8 +136,7 @@ public class KeyCloakService {
                         .getRoleEntities()
                         .forEach(
                                 roleEntity -> {
-                                    roles.add(getClientRoleByName(roleEntity).toRepresentation());
-//                                    roles.add(getClientRoleByName(roleEntity.getName()).toRepresentation());
+                                    roles.add(findRoleByRoleName(roleEntity));
                                 });
             }
 
@@ -115,14 +147,19 @@ public class KeyCloakService {
                             + (registerRequest.getRoleEntities() != null ? registerRequest.getRoleEntities().size() : 0));
 
             if (!CollectionUtils.isEmpty(roles)) {
-                assignClientLevelRole(userId, roles);
+                assignRealmLevelRole(userId, roles);
                 System.out.println(
                         "roles count: "
                                 + roles.size()
                                 + " saved in Keycloak for username : "
                                 + user.getUsername());
+
+
             }
         } catch (Exception ex) {
+            System.out.println("-----------------------");
+            System.out.println(ex);
+            System.out.println("-----------------------");
 //            System.out.println("Exception while assigning role to user " + userEntity.getUsername(), ex);
 //            delete(userId);
 //            throw new ExtendedRuntimeException("User creation failed");
